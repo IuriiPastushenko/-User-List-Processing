@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { HttpException } from '../ errors/httpexception';
 import { typeOrmConnects } from '../../index';
-
-import { IUser } from './users.interfaces';
+import { validationMiddleware } from '../midlleware/validate.middleware';
+import { UsersListDto } from './dto/userslistdto';
 
 export class UsersRouter {
 	public router = Router();
@@ -13,20 +13,19 @@ export class UsersRouter {
 
 	usersrouts(): void {
 		// Registration
-		this.router.post(
-			'/registration',
+		this.router.get(
+			'/userslist',
+			validationMiddleware(UsersListDto),
 			async (req: Request, res: Response, next: NextFunction) => {
 				try {
-					const dataForDB: IUser = req.body;
-					//await typeOrmConnects.userRegistrationWriteToDB(dataForDB);
-					res.status(201).json('Registration is successful');
+					const dataForDB = req.query;
+					const resultUsersList = await typeOrmConnects.sendUsersList(
+						dataForDB,
+					);
+					res.status(201).json(resultUsersList);
 				} catch (err) {
 					next(
-						new HttpException(
-							401,
-							'Registration is not successful',
-							err as string,
-						),
+						new HttpException(406, 'Users list not available', err as string),
 					);
 				}
 			},

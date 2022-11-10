@@ -7,7 +7,7 @@ export const typeOrmConfig: DataSourceOptions = {
 	port: 5432,
 	username: 'postgres',
 	password: '17071707',
-	database: 'tinyOrganization',
+	database: 'tesktask10',
 	synchronize: false,
 	logging: true,
 	entities: [Users],

@@ -1,5 +1,7 @@
 import { DataSource } from 'typeorm';
+import { IUser, IUsersList } from '../users/users.interfaces';
 import { typeOrmConfig } from './ typeeorm.config';
+import { Users } from './entities/users.entity';
 
 export class TypeOrmConnects {
 	private dataSource: DataSource;
@@ -16,5 +18,17 @@ export class TypeOrmConnects {
 			console.log('Error connection to DB');
 			throw err;
 		}
+	}
+
+	// Return list of users
+	async sendUsersList(inputData: IUsersList): Promise<IUser[] | undefined> {
+		return await this.dataSource
+			.getRepository(Users)
+			.createQueryBuilder('us')
+			.select('us.id_user')
+			.addSelect('us.name')
+			.addSelect('us.runk')
+			.orderBy(`us.${inputData.sort}`)
+			.getMany();
 	}
 }
