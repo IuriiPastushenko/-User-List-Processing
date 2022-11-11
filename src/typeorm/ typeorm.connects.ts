@@ -27,8 +27,60 @@ export class TypeOrmConnects {
 			.createQueryBuilder('us')
 			.select('us.id_user')
 			.addSelect('us.name')
-			.addSelect('us.runk')
+			.addSelect('us.rank')
 			.orderBy(`us.${inputData.sort}`)
 			.getMany();
+	}
+
+	// Change user
+	async changeUserRank(inputData: IUser): Promise<void> {
+		const result = await this.dataSource
+			.getRepository(Users)
+			.createQueryBuilder()
+			.update(Users)
+			.set({ rank: inputData.rank })
+			.where('name = :id', { id: inputData.name })
+			.execute();
+		if (result.affected === 0) {
+			throw Error('Rank of is not changed');
+		}
+	}
+
+	// Add user
+	async addUser(inputData: IUser): Promise<void> {
+		await this.dataSource
+			.getRepository(Users)
+			.createQueryBuilder()
+			.insert()
+			.into(Users)
+			.values({ name: inputData.name, rank: inputData.rank })
+			.execute();
+	}
+
+	// Delete user
+	async deleteUser(inputData: IUser): Promise<void> {
+		const result = await this.dataSource
+			.getRepository(Users)
+			.createQueryBuilder('us')
+			.delete()
+			.where('name = :id', { id: inputData.name })
+			.execute();
+		if (result.affected === 0) {
+			throw Error('Deleting user not available');
+		}
+	}
+
+	// Update user
+	async updateUser(inputData: IUser): Promise<void> {
+		const result = await this.dataSource
+			.getRepository(Users)
+			.createQueryBuilder()
+			.update(Users)
+			.set({ name: inputData.name, rank: inputData.rank })
+			.where('id_user = :id', { id: inputData.id_user })
+			.execute();
+		if (result.affected === 0) {
+			throw Error('Updating user not available');
+		}
 	}
 }

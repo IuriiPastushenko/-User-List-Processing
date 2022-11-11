@@ -1,7 +1,7 @@
 export interface IUser {
-	id_user: number;
+	id_user?: number;
 	name: string;
-	runk: number;
+	rank: number;
 }
 
 export interface IUsersList {

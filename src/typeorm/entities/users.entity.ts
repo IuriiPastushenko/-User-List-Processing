@@ -5,13 +5,12 @@ export class Users {
 	@PrimaryGeneratedColumn()
 	id_user: number;
 
-	@Column({ type: 'varchar', length: 20, nullable: false, unique: true })
+	@Column({ type: 'varchar', length: 20, nullable: false })
 	name: string;
 
 	@Column({
 		type: 'numeric',
 		nullable: false,
-		unique: true,
 	})
-	runk: number;
+	rank: number;
 }

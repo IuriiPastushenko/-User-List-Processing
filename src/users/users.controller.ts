@@ -2,7 +2,10 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { HttpException } from '../ errors/httpexception';
 import { typeOrmConnects } from '../../index';
 import { validationMiddleware } from '../midlleware/validate.middleware';
-import { UsersListDto } from './dto/userslistdto';
+import { UserDTO } from './dto/user.dto';
+import { UserFullDTO } from './dto/userfull.dto';
+import { UsersListDto } from './dto/userslist.dto';
+import { IUser } from './users.interfaces';
 
 export class UsersRouter {
 	public router = Router();
@@ -12,7 +15,7 @@ export class UsersRouter {
 	}
 
 	usersrouts(): void {
-		// Registration
+		// List of users
 		this.router.get(
 			'/userslist',
 			validationMiddleware(UsersListDto),
@@ -26,6 +29,79 @@ export class UsersRouter {
 				} catch (err) {
 					next(
 						new HttpException(406, 'Users list not available', err as string),
+					);
+				}
+			},
+		);
+
+		this.router.post(
+			'/changeusersrunk',
+			validationMiddleware(UserDTO),
+			async (req: Request, res: Response, next: NextFunction) => {
+				try {
+					const dataForDB: IUser = req.body;
+					await typeOrmConnects.changeUserRank(dataForDB);
+					const resultUsersList = await typeOrmConnects.sendUsersList({
+						sort: 'rank',
+					});
+					res.status(201).json(resultUsersList);
+				} catch (err) {
+					next(new HttpException(406, 'Rank of is not changed', err as string));
+				}
+			},
+		);
+
+		this.router.post(
+			'/adduser',
+			validationMiddleware(UserDTO),
+			async (req: Request, res: Response, next: NextFunction) => {
+				try {
+					const dataForDB: IUser = req.body;
+					await typeOrmConnects.addUser(dataForDB);
+					res.status(201).json(` User ${dataForDB.name} was added`);
+				} catch (err) {
+					next(
+						new HttpException(406, 'Adding user not available', err as string),
+					);
+				}
+			},
+		);
+
+		this.router.post(
+			'/deleteuser',
+			validationMiddleware(UserDTO),
+			async (req: Request, res: Response, next: NextFunction) => {
+				try {
+					const dataForDB: IUser = req.body;
+					await typeOrmConnects.deleteUser(dataForDB);
+					res.status(201).json(` User ${dataForDB.name} was deleted`);
+				} catch (err) {
+					next(
+						new HttpException(
+							406,
+							'Deleting user not available',
+							err as string,
+						),
+					);
+				}
+			},
+		);
+
+		this.router.post(
+			'/updateuser',
+			validationMiddleware(UserFullDTO),
+			async (req: Request, res: Response, next: NextFunction) => {
+				try {
+					const dataForDB: IUser = req.body;
+					await typeOrmConnects.updateUser(dataForDB);
+					res.status(201).json(` User ${dataForDB.name} was updated`);
+				} catch (err) {
+					next(
+						new HttpException(
+							406,
+							'Updating user not available',
+							err as string,
+						),
 					);
 				}
 			},
