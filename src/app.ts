@@ -2,7 +2,7 @@ import express, { Express } from 'express';
 import { UsersRouter } from './users/users.controller';
 import bodyParser from 'body-parser';
 import { typeOrmConnects } from '../index';
-import { errorMiddleware } from './ errors/ error.middleware';
+import { errorMiddleware } from './errors/ error.middleware';
 
 export class ServerOrganization {
 	private app: Express;

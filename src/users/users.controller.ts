@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { HttpException } from '../ errors/httpexception';
+import { HttpException } from '../errors/httpexception';
 import { typeOrmConnects } from '../../index';
 import { validationMiddleware } from '../midlleware/validate.middleware';
 import { UserDTO } from './dto/user.dto';
@@ -17,7 +17,7 @@ export class UsersRouter {
 	usersrouts(): void {
 		// List of users
 		this.router.get(
-			'/userslist',
+			'/list',
 			validationMiddleware(UsersListDto),
 			async (req: Request, res: Response, next: NextFunction) => {
 				try {
@@ -35,7 +35,7 @@ export class UsersRouter {
 		);
 
 		this.router.post(
-			'/changeusersrunk',
+			'/changerank',
 			validationMiddleware(UserDTO),
 			async (req: Request, res: Response, next: NextFunction) => {
 				try {
@@ -46,13 +46,19 @@ export class UsersRouter {
 					});
 					res.status(201).json(resultUsersList);
 				} catch (err) {
-					next(new HttpException(406, 'Rank of is not changed', err as string));
+					next(
+						new HttpException(
+							406,
+							'Rank of user is not changed',
+							err as string,
+						),
+					);
 				}
 			},
 		);
 
 		this.router.post(
-			'/adduser',
+			'/add',
 			validationMiddleware(UserDTO),
 			async (req: Request, res: Response, next: NextFunction) => {
 				try {
@@ -68,7 +74,7 @@ export class UsersRouter {
 		);
 
 		this.router.post(
-			'/deleteuser',
+			'/delete',
 			validationMiddleware(UserDTO),
 			async (req: Request, res: Response, next: NextFunction) => {
 				try {
@@ -88,7 +94,7 @@ export class UsersRouter {
 		);
 
 		this.router.post(
-			'/updateuser',
+			'/update',
 			validationMiddleware(UserFullDTO),
 			async (req: Request, res: Response, next: NextFunction) => {
 				try {
