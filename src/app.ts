@@ -33,9 +33,9 @@ export class ServerOrganization {
 
 	// Listen server
 	async init(): Promise<void> {
-		this.app.listen(this.port, async () => {
+		this.app.listen(this.port, () => {
 			console.log(`Server is started, PORT ${this.port}`);
 		});
-		typeOrmConnects.initialize();
+		await typeOrmConnects.initialize();
 	}
 }
